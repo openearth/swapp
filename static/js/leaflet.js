@@ -1,5 +1,8 @@
+// uses chart.js
+var map;
 $(function(){
-    var lmap = L.map('leafletmap').setView([52.1, 5.5], 10);
+    var endPoint = "http://swapp.deltares.nl/db/measurements";
+    map = L.map('leafletmap').setView([52.1, 5.5], 10);
 
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -7,132 +10,168 @@ $(function(){
             '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="http://mapbox.com">Mapbox</a>',
         id: 'examples.map-20v6611k'
-    }).addTo(lmap);
+    }).addTo(map);
     new L.Control.GeoSearch({
         provider: new L.GeoSearch.Provider.Google({
             region: ''
         })
-    }).addTo(lmap);				
-	
-	
-	function getColor(d) {
-		return d > 1750 ? '#800026' :
-			d > 1500 ? '#BD0026' :
-			d > 1250  ? '#E31A1C' :
-			d > 1000  ? '#FC4E2A' :
-			d > 750   ? '#FD8D3C' :
-			d > 500   ? '#FEB24C' :
-			d > 250   ? '#FED976' :
-						'#FFEDA0';
-	}		
-	
-	
-    d3.json("http://swapp.deltares.nl/db/measurements", function(data) {
+    }).addTo(map);				
+    
+    
+    function getColor(d) {
+	return d > 1750 ? '#800026' :
+	    d > 1500 ? '#BD0026' :
+	    d > 1250  ? '#E31A1C' :
+	    d > 1000  ? '#FC4E2A' :
+	    d > 750   ? '#FD8D3C' :
+	    d > 500   ? '#FEB24C' :
+	    d > 250   ? '#FED976' :
+	    '#FFEDA0';
+    }		
+    
+
+    L.easyButton('fa-area-chart', 
+                 function (){
+                     
+                     console.log('chart');
+                     $('#leafletmap').fadeOut();
+                     $('#chart').css('height', '100%');
+                 },
+                 ''
+                );
+    L.easyButton('fa-download', 
+                 function (){
+
+                     console.log('download!');
+                     var csv = "a;b";
+                     var csvData = 'data:application/csv;charset=utf-8,' + csv;
+                     console.log($(this));
+                     $('a')
+                         .attr({
+                             'href': csvData,
+                             'target': '_blank'
+                         });
+                 },
+                 ''
+                );
+    
+    d3.json(endPoint, function(data) {
         var features = [];
         data.objects.forEach(function(x){			
             features.push(x.data);
         });
-		
+	
         var geojson = {							
             "type": "FeatureCollection",			
             "features": features				
         };		
-		
+	
         var coorsLayer = L.geoJson(geojson, {				
-			
+	    
             pointToLayer: function (feature, latlng) {
-				
-				var date = new Date(feature.properties.dateTime);
-				
+		
+		var date = new Date(feature.properties.dateTime);
+		
                 var marker = L.circleMarker(latlng, {
-					
+		    
                     radius: 10,
-					color: 'black', 
+		    color: 'black', 
                     fillColor: getColor(feature.properties.electricalConductivity),
                     weight: 1,
                     opacity: 1,
                     fillOpacity: 1
-                }).bindPopup("<b>Properties</b>" +
-							"<br /> Date: " + date.toLocaleDateString() +
-							"<br /> Time: " + date.toLocaleTimeString() + 
-							"<br /> EC: " + feature.properties.electricalConductivity + " " + 
-										String.fromCharCode(8486) + String.fromCharCode(215) + "m" +
-							"<br /> Waterbody: " + feature.properties.waterbodyType + 	
-							"<br /> Water state: " + feature.properties.waterState + 
-							"<br /> Depth: " + feature.properties.observationDepth + 								
-							"<br /> Water temp.: " + feature.properties.waterTemperature + String.fromCharCode(176));	
-			
-				marker.on('mouseover', function(f){
-					info.update(feature)
-				});
-				
-				marker.on('mouseout', function(f){
-					info.reset(feature)
-				});				
-							
+                });
+		marker.on('mouseover', function(f){
+		    info.update(feature);
+		});
+		
+		marker.on('mouseout', function(f){
+		    info.reset(feature);
+		});				
+		
+                marker.on('click', function(e){
+                    console.log(e);
+                    var coordinate = e.target.feature.geometry.coordinates;
+                    var query = generateQuery(coordinate);
+                    console.log(query);
+                    d3.json(endPoint + "?query="+JSON.stringify(query), function(data){
+                        var records = [];
+                        console.log(data);
+                        for (var i = 0, l = data.objects.length; i < l; i++) {
+                            records.push({
+                                x: Number(new Date(data.objects[i].data.properties.dateTime)), 
+                                y: data.objects[i].data.properties.electricalConductivity
+
+                            });
+                        }
+                        console.log(records);
+                        addChart(records);
+                    });
+                });
+		
                 return marker;
             }
-		
-			
-        }).addTo(lmap);	
-		
-		
-		// control that shows measurement info on hover
-		var info = L.control({position: 'topleft'});
-
-		info.onAdd = function (map) {
-			this._div = L.DomUtil.create('div', 'info');
-			this._div.innerHTML = "<h4>Hover over a measurement</h4>";					
-			return this._div;
-		};
-
-		info.update = function (f) {
-			
-			var date = new Date(f.properties.dateTime);
-			
-			this._div.innerHTML = '<h4>Measurement information</h4>' + 
-							"Date: " + date.toLocaleDateString() +
-							"<br /> Time: " + date.toLocaleTimeString() + 
-							"<br /> EC: " + f.properties.electricalConductivity + " " + 
-										String.fromCharCode(8486) + String.fromCharCode(215) + "m" +
-							"<br /> Waterbody: " + f.properties.waterbodyType + 	
-							"<br /> Water state: " + f.properties.waterState + 
-							"<br /> Depth: " + f.properties.observationDepth + 								
-							"<br /> Water temp.: " + f.properties.waterTemperature + String.fromCharCode(176);				
-		};
-
-		info.reset = function (f) {			
-			this._div.innerHTML = "<h4>Hover over a measurement</h4>";				
-		};
-		
-		info.addTo(lmap);		
-		
+	    
+	    
+        }).addTo(map);	
 	
-		var legend = L.control({position: 'topright'});
+	
+	// control that shows measurement info on hover
+	var info = L.control({position: 'topleft'});
 
-		legend.onAdd = function (map) {
+	info.onAdd = function (map) {
+	    this._div = L.DomUtil.create('div', 'info');
+	    this._div.innerHTML = "<h4>Hover over a measurement</h4>";					
+	    return this._div;
+	};
 
-			var div = L.DomUtil.create('div', 'info legend'),				
-				grades = [0, 250, 500, 750, 1000, 1250, 1500, 1750],
-				labels = [],
-				from, to;
+	info.update = function (f) {
+	    
+	    var date = new Date(f.properties.dateTime);
+	    
+	    this._div.innerHTML = '<h4>Measurement information</h4>' + 
+		"Date: " + date.toLocaleDateString() +
+		"<br /> Time: " + date.toLocaleTimeString() + 
+		"<br /> EC: " + f.properties.electricalConductivity + " " + 
+		String.fromCharCode(8486) + String.fromCharCode(215) + "m" +
+		"<br /> Waterbody: " + f.properties.waterbodyType + 	
+		"<br /> Water state: " + f.properties.waterState + 
+		"<br /> Depth: " + f.properties.observationDepth + 								
+		"<br /> Water temp.: " + f.properties.waterTemperature + String.fromCharCode(176);				
+	};
 
-			labels.push("<b>EC (" + String.fromCharCode(8486) + String.fromCharCode(215) + "m)</b>");
-					
-			for (var i = 0; i < grades.length; i++) {
-				from = grades[i];
-				to = grades[i + 1];
+	info.reset = function (f) {			
+	    this._div.innerHTML = "<h4>Hover over a measurement</h4>";				
+	};
+	
+	info.addTo(map);		
+	
+	
+	var legend = L.control({position: 'topright'});
 
-				labels.push(
-					'<i style="background:' + getColor(from + 1) + '"></i> ' +
-					from + (to ? '&ndash;' + to : '+'));
-			}
+	legend.onAdd = function (map) {
 
-			div.innerHTML = labels.join('<br>');
-			return div;
-		};
+	    var div = L.DomUtil.create('div', 'info legend'),				
+	 grades = [0, 250, 500, 750, 1000, 1250, 1500, 1750],
+	 labels = [],
+	 from, to;
 
-		legend.addTo(lmap);
+	    labels.push("<b>EC (" + String.fromCharCode(8486) + String.fromCharCode(215) + "m)</b>");
+	    
+	    for (var i = 0; i < grades.length; i++) {
+		from = grades[i];
+		to = grades[i + 1];
+
+		labels.push(
+		    '<i style="background:' + getColor(from + 1) + '"></i> ' +
+			from + (to ? '&ndash;' + to : '+'));
+	    }
+
+	    div.innerHTML = labels.join('<br>');
+	    return div;
+	};
+
+	legend.addTo(map);
     });				
-	
+    
 });
