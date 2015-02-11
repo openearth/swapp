@@ -5,10 +5,10 @@ html, body {
     padding: 0;
 }
 #leafletmap {
-    height: 80%;
+    height: 100%;
 }
 #chart {
-    height: 20%;
+    height: 0%;
     width: 100%;
 
 }
@@ -76,4 +76,11 @@ html, body {
 .info h4 {
     margin: 0 0 5px;
     color: #777;
+}
+
+#leafletmap.shrunken {
+    height: 80%;
+}
+#chart.visible {
+    height: 20%;
 }

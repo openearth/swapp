@@ -4,9 +4,9 @@ $(function(){
     var endPoint = "http://swapp.deltares.nl/db/measurements";
     map = L.map('leafletmap').setView([52.1, 5.5], 10);
 
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+    var layer = L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
         maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+        attribution: 'Data: <a href="http://swapp.deltares.nl/info">SWAPP</a>.  Background map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
             '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="http://mapbox.com">Mapbox</a>',
         id: 'examples.map-20v6611k'
@@ -30,30 +30,31 @@ $(function(){
     }		
     
 
-    L.easyButton('fa-area-chart', 
-                 function (){
-                     
-                     console.log('chart');
-                     $('#leafletmap').fadeOut();
-                     $('#chart').css('height', '100%');
-                 },
-                 ''
-                );
+    var locationFilter = new L.LocationFilter().addTo(map);
     L.easyButton('fa-download', 
                  function (){
-
-                     console.log('download!');
-                     var csv = "a;b";
-                     var csvData = 'data:application/csv;charset=utf-8,' + csv;
-                     console.log($(this));
-                     $('a')
-                         .attr({
-                             'href': csvData,
-                             'target': '_blank'
-                         });
+                     var href = '';
+                     if (locationFilter.isEnabled()) {
+                         query = generateAreaQuery(locationFilter.getBounds());
+                         href = endPoint + ".csv" + "?query=" + JSON.stringify(query);
+                     } else {
+                         href = endPoint + ".csv";
+                     }
+                     window.location.href = href;
                  },
                  ''
                 );
+
+    var attribution =  L.control.attribution();
+    attribution.addAttribution('swappy');
+    L.easyButton('fa-info-circle', 
+                 function (){
+                     window.location.href = 'http://swapp.deltares.nl/info.html';
+                 },
+                 ''
+                );
+
+
     
     d3.json(endPoint, function(data) {
         var features = [];
@@ -81,15 +82,9 @@ $(function(){
                     opacity: 1,
                     fillOpacity: 1
                 });
-		marker.on('mouseover', function(f){
-		    info.update(feature);
-		});
-		
-		marker.on('mouseout', function(f){
-		    info.reset(feature);
-		});				
 		
                 marker.on('click', function(e){
+		    info.update(feature);
                     console.log(e);
                     var coordinate = e.target.feature.geometry.coordinates;
                     var query = generateQuery(coordinate);
@@ -106,6 +101,10 @@ $(function(){
                         }
                         console.log(records);
                         addChart(records);
+                        var chart = d3.select('#chart');
+                        chart.classed({'visible': true});
+                        var map = d3.select('#leafletmap');
+                        map.classed({'shrunken': true});
                     });
                 });
 		
@@ -121,7 +120,9 @@ $(function(){
 
 	info.onAdd = function (map) {
 	    this._div = L.DomUtil.create('div', 'info');
-	    this._div.innerHTML = "<h4>Hover over a measurement</h4>";					
+            this._div.innerHTML = '<h4>Measurement information</h4>' + 
+                "no selection"; 
+	    
 	    return this._div;
 	};
 
