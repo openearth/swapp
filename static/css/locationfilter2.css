@@ -1,3 +1,7 @@
+a:link {
+    text-decoration: none;
+}
+
 div.leaflet-marker-icon.location-filter.resize-marker {
     background: url( img/resize-handle.png ) no-repeat;
     cursor: move;
@@ -7,72 +11,44 @@ div.leaflet-marker-icon.location-filter.move-marker {
     cursor: move;
 }
 
-div.location-filter.button-container {
-    background: #bfbfbf;
-    background: rgba(0, 0, 0, 0.25);
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;
-    border-radius: 7px;
-    padding: 5px;
+div.location-filter.button-container {  
+	margin-top: 16px;
+	margin-bottom: 4px;
 }
+
 .leaflet-container div.location-filter.button-container a {
-    display: inline-block;
-    color: #0F2416;
-    font-size: 11px;
-    font-weight: normal;
-    text-shadow: #A1BB9C 0 1px;
-    padding: 6px 7px;
-    border: 1px solid #9CC5A4;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    -webkit-box-shadow: inset rgba(255,255,255,0.75) 0 1px 1px;
-    -moz-box-shadow: inset rgba(255,255,255,0.75) 0 1px 1px;
-    box-shadow: inset rgba(255,255,255,0.75) 0 1px 1px;
-    background: #c4e3b9;
-    background: rgba(218, 252, 205, 0.9);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(218, 252, 205, 0.9)), color-stop(100%, rgba(173, 226, 176, 0.9)));
-    background: -webkit-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background: -moz-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background: -ms-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background: -o-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background: linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
+	color: black;
+	font: 14px Arial;
+    border: 1px solid rgb(255,255,255);
+	padding: 5px 6px 6px 25px;
+    background: rgb(255,255,255);
+    border-radius: 5px;
+    background-image: url( img/filter-icon.png );
+	background-repeat: no-repeat;
+    background-position: left;
+	box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.4);
 }
+
 .leaflet-container div.location-filter.button-container a:hover {
-    color: #263F1C;
-    background: #dde6d8;
-    background: rgba(245, 245, 245, 0.9);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(245, 245, 245, 0.9)), color-stop(100%, rgba(223, 223, 223, 0.9)));
-    background: -webkit-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background: -moz-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background: -ms-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background: -o-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background: linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
+	color: black;
+	font: 14px Arial;
+    border: 1px solid rgb(235,235,235);
+	padding: 5px 6px 6px 25px;
+    background: rgb(235,235,235);
+    border-radius: 5px;
+    background-image: url( img/filter-icon.png );
+	background-repeat: no-repeat;
+    background-position: left;
+	box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.4);
 }
 
 .leaflet-container div.location-filter.button-container a.enable-button {
-    padding: 6px 7px 6px 25px;
-    background-image: url( img/filter-icon.png ), -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(218, 252, 205, 0.9)), color-stop(100%, rgba(173, 226, 176, 0.9)));
-    background-image: url( img/filter-icon.png ), -webkit-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), -moz-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), -ms-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), -o-linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), linear-gradient(top, rgba(218, 252, 205, 0.9) 0%, rgba(173, 226, 176, 0.9) 100%);
-    background-repeat: no-repeat;
-    background-position: left center;
+
 }
 .leaflet-container div.location-filter.button-container a.enable-button:hover,
 .leaflet-container div.location-filter.button-container.enabled a.enable-button {
-    background-image: url( img/filter-icon.png ), -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(245, 245, 245, 0.9)), color-stop(100%, rgba(223, 223, 223, 0.9)));
-    background-image: url( img/filter-icon.png ), -webkit-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), -moz-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), -ms-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), -o-linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background-image: url( img/filter-icon.png ), linear-gradient(top, rgba(245, 245, 245, 0.9) 0%, rgba(223, 223, 223, 0.9) 100%);
-    background-repeat: no-repeat;
-    background-position: left center;
+
 }
 
 .leaflet-container div.location-filter.button-container a.adjust-button {
-    margin-left: 2px;
 }
