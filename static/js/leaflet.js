@@ -36,9 +36,9 @@ $(function(){
                      var href = '';
                      if (locationFilter.isEnabled()) {
                          query = generateAreaQuery(locationFilter.getBounds());
-                         href = endPoint + ".csv" + "?query=" + JSON.stringify(query);
+                         href = endPoint + ".csv" + "?limit=0&query=" + JSON.stringify(query);
                      } else {
-                         href = endPoint + ".csv";
+                         href = endPoint + ".csv?limit=0";
                      }
                      window.location.href = href;
                  },
@@ -89,7 +89,7 @@ $(function(){
                     var coordinate = e.target.feature.geometry.coordinates;
                     var query = generateQuery(coordinate);
                     console.log(query);
-                    d3.json(endPoint + "?query="+JSON.stringify(query), function(data){
+                    d3.json(endPoint + "?limit=0&query="+JSON.stringify(query), function(data){
                         var records = [];
                         console.log(data);
                         for (var i = 0, l = data.objects.length; i < l; i++) {
