@@ -56,7 +56,7 @@ $(function(){
 
 
     
-    d3.json(endPoint, function(data) {
+    d3.json(endPoint + "?limit=0", function(data) {
         var features = [];
         data.objects.forEach(function(x){			
             features.push(x.data);
