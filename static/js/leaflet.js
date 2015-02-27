@@ -70,7 +70,7 @@ $(function(){
 	    
             pointToLayer: function (feature, latlng) {
 		
-		var date = new Date(feature.properties.dateTime);
+				var date = new Date(feature.properties.dateTime);
 		
                 var marker = L.circleMarker(latlng, {
 		    
@@ -82,9 +82,10 @@ $(function(){
                     fillOpacity: 1
                 });
 		
-                marker.on('click', function(e){
-		    info.update(feature);
-                    console.log(e);
+                marker.on('click', function(e){					
+				
+					info.update(feature); 
+					
                     var coordinate = e.target.feature.geometry.coordinates;
                     var query = generateQuery(coordinate);
                     console.log(query);
@@ -115,16 +116,15 @@ $(function(){
 	
 		// control that shows measurement info on hover
 		var info = L.control({position: 'topleft'});
-
+		
 		info.onAdd = function (map) {
 			this._div = L.DomUtil.create('div', 'info');
-				this._div.innerHTML = '<h4>Measurement information</h4>' + 
-					"no selection"; 
-			
+			this._div.innerHTML = '';					
 			return this._div;
 		};
 
-		info.update = function (f) {
+		
+		info.update = function (f) {			
 			
 			var date = new Date(f.properties.dateTime);
 			
@@ -140,15 +140,14 @@ $(function(){
 			// code for symbols 'Ohm x m': String.fromCharCode(8486) + String.fromCharCode(215) + "m"		
 		};
 
-		info.reset = function (f) {			
-			this._div.innerHTML = '<h4>Measurement information</h4>' + 
-					"no selection"; 				
+		info.reset = function (f) {		
+			this._div.innerHTML = '';				
 		};
 	
 		info.addTo(map);		
 		
 		window.onclick = function(){
-			info.reset()			
+			info.reset();
 		}
 		
 		var legend = L.control({position: 'topright'});
