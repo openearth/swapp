@@ -18,7 +18,6 @@ $(function(){
         })
     }).addTo(map);				
     
-    
     function getColor(d) {
 	return d > 25 ? 'rgb(130,0,0)' :
 	    d > 10 ? 'rgb(253,1,0)' :
@@ -73,9 +72,8 @@ $(function(){
 				var date = new Date(feature.properties.dateTime);
 		
                 var marker = L.circleMarker(latlng, {
-		    
                     radius: 10,
-					color: 'black', 
+		    color: 'black', 
                     fillColor: getColor(feature.properties.electricalConductivity),
                     weight: 1,
                     opacity: 1,
@@ -93,18 +91,21 @@ $(function(){
                         var records = [];
                         console.log(data);
                         for (var i = 0, l = data.objects.length; i < l; i++) {
-                            records.push({
-                                x: Number(new Date(data.objects[i].data.properties.dateTime)), 
-                                y: data.objects[i].data.properties.electricalConductivity
+                            var properties = data.objects[i].data.properties;
+                            var record = {
+                                date: Number(new Date(properties.dateTime)), 
+                                value: properties.electricalConductivity
+                            };
+                            if (record.date) { 
+                                records.push(record);
+                            } else {
+                                console.log('can not convert', properties);
+                            }
 
-                            });
                         }
                         console.log(records);
-                        addChart(records);
-                        var chart = d3.select('#chart');
-                        chart.classed({'visible': true});
-                        var map = d3.select('#leafletmap');
-                        map.classed({'shrunken': true});
+                        updateChart(records);
+                        $('#modalchart').modal('show');
                     });
                 });
 		

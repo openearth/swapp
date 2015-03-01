@@ -78,9 +78,32 @@ html, body {
     color: #777;
 }
 
-#leafletmap.shrunken {
-    height: 80%;
+#chart {
+    height: 100%;
 }
-#chart.visible {
-    height: 20%;
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
 }
